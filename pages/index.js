@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./index.module.css";
 import Link from "next/link";
 export default function Home() {
-  const [url, setUrl] = useState("https://google.com");
+  const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
 
   const handleCopy = () => {

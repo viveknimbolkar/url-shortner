@@ -12,7 +12,9 @@ function UrlID({ originalUrl }) {
   );
 }
 export async function getServerSideProps({ params }) {
-  const res = await fetch(`http://localhost:3000/api/${params.urlid}`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/${params.urlid}`
+  );
   const url = await res.json();
   return {
     props: {
