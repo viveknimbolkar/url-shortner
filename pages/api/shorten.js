@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     const id = nanoid(5);
     const shortUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/${id}`;
 
+    
     console.log(shortUrl);
 
     const params = {
