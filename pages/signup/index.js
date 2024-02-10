@@ -1,58 +1,58 @@
+import cognitoPool from "@/aws/cognito-identity-client";
+import { AccountContext } from "@/context/account";
+import { CognitoUser } from "amazon-cognito-identity-js";
 import Link from "next/link";
-import { useState } from "react";
-
-export default function SignUp({ user }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+import { useContext, useState } from "react";
+export default function SignUp() {
+  const [email, setEmail] = useState("defala9137@oprevolt.com");
+  const [password, setPassword] = useState("Password@12345");
+  const [confirmPassword, setConfirmPassword] = useState("Password@12345");
   const [otp, setOtp] = useState("");
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("john");
+  const [name, setName] = useState("John Doe");
   const [isOtpSent, setIsOtpSent] = useState(false);
-
+  const { signUp } = useContext(AccountContext);
   const handleSignUp = async () => {
-    const data = {
-      email: email,
-      password: password,
-      name: name,
-      username: username,
-    };
-
-    const result = await fetch("/api/signup", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-
-    const response = await result.json();
-
-    if (response.error) {
-      alert(response.error);
-    } else {
+    const isSignedUp = await signUp(username, password, email, name);
+    if (isSignedUp) {
       setIsOtpSent(true);
     }
   };
 
   const handleVerifyOtp = () => {
-    const data = {
-      username: username,
-      otp: otp,
+    const userData = {
+      Username: username,
+      Pool: cognitoPool,
     };
+    const cognitoUser = new CognitoUser(userData);
+    cognitoUser.confirmRegistration(otp, true, (err, result) => {
+      if (err) {
+        console.error(err);
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      if (result === "SUCCESS") {
+        window.location.href = "/login";
+      }
+    });
+  };
 
-    console.log(data);
-
-    fetch("/api/verify-otp", {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        console.log(response);
-        if (response.error) {
-          alert(response.error);
-        } else {
-          window.location.href = "/";
-        }
-      });
+  const handleResendOtp = () => {
+    const userData = {
+      Username: email,
+      Pool: cognitoPool,
+    };
+    const cognitoUser = new CognitoUser(userData);
+    cognitoUser.resendConfirmationCode((err, result) => {
+      if (err) {
+        console.error(err);
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      if (result) {
+        alert("OTP sent successfully");
+      }
+    });
   };
 
   return (
@@ -85,6 +85,14 @@ export default function SignUp({ user }) {
                 >
                   Verify OTP
                 </button>
+              </div>{" "}
+              <div className="mt-2">
+                <button
+                  onClick={handleResendOtp}
+                  className="w-full px-4 py-2 tracking-wide border-2 hover:text-white transition-colors duration-200 transform  rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                >
+                  Resend OTP
+                </button>
               </div>
             </div>
           ) : (
@@ -103,15 +111,15 @@ export default function SignUp({ user }) {
                   className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4 mt-6">
                 <label
-                  htmlFor="username"
+                  htmlFor="name"
                   className="block text-sm font-semibold text-gray-800"
                 >
                   Username
                 </label>
                 <input
-                  type="username"
+                  type="name"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
@@ -180,6 +188,8 @@ export default function SignUp({ user }) {
               Login
             </Link>
           </p>
+        <p className="text-red-500 text-center"> These are test user credentials!</p>
+
         </div>
       </div>
     </>

@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "./index.module.css";
 import Link from "next/link";
+import { AccountContext } from "@/context/account";
+import Header from "@/components/header";
 export default function Home() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
+  const { isLoggedIn, user } = useContext(AccountContext);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
   };
+
   const handleShorten = async () => {
+    if (!url) {
+      return;
+    }
     try {
       const response = await fetch("/api/shorten", {
         method: "POST",
@@ -16,7 +23,6 @@ export default function Home() {
       });
 
       const data = await response.json();
-      console.log("data", data);
       setShortUrl(data.shortUrl);
     } catch (error) {
       console.log(error);
@@ -25,22 +31,40 @@ export default function Home() {
 
   return (
     <section className={`w-screen h-screen ${styles.homebackground}`}>
-      <nav
+      <Header isHomePage={true} />
+      {/* <nav
         className={`${styles.navbar} flex justify-between px-20 text-white p-4`}
       >
         <h1 className="font-bold text-3xl">ShortURL</h1>
-        <div className="flex gap-2">
-          <Link href="/login" className="rounded-full bg-blue px-3 py-2">
-            Login
-          </Link>
-          <Link
-            href={"/signup"}
-            className="rounded-full bg-white text-black px-3 py-2"
-          >
-            Sign Up
-          </Link>
+        <div className="flex gap-4">
+          {isLoggedIn ? (
+            <>
+              <Link href={"/dashboard"} className="text-white">
+                DashBoard
+              </Link>
+              <img
+                src={user.picture}
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+              <h3>{user.name}</h3>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="rounded-full bg-blue px-3 py-2">
+                Login
+              </Link>
+              <Link
+                href={"/signup"}
+                className="rounded-full bg-white text-black px-3 py-2"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
-      </nav>
+      </nav> */}
       <div className=" h-[90%] flex justify-center items-center">
         <div>
           <h1 className="text-white text-6xl font-bold text-center">
@@ -55,7 +79,7 @@ export default function Home() {
               onChange={(e) => setUrl(e.target.value)}
               type="text"
               placeholder="Enter your URL"
-              className=" w-full outline-none p-3 rounded-l-full"
+              className={` w-full outline-none p-3 rounded-l-full`}
             />
             <button
               onClick={handleShorten}

@@ -4,11 +4,11 @@ import { nanoid } from "nanoid";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const body = JSON.parse(req.body);
+    if (!body.url) {
+      return res.status(400).json({ error: "URL is required" });
+    }
     const id = nanoid(5);
     const shortUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/${id}`;
-
-    
-    console.log(shortUrl);
 
     const params = {
       TableName: "url-shortner",
@@ -22,7 +22,9 @@ export default async function handler(req, res) {
     try {
       const command = new PutItemCommand(params);
       const result = await dynamodb.send(command);
-      res.status(200).json({ shortUrl: shortUrl });
+      if (result) {
+        res.status(200).json({ shortUrl: shortUrl });
+      }
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: err.message });

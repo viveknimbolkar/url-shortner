@@ -2,6 +2,9 @@ import { dynamodb } from "@/aws/dynamodb";
 import { GetItemCommand } from "@aws-sdk/client-dynamodb";
 export default async function handler(req, res) {
   if (req.method === "GET") {
+    if (!req.query.urlid || req.query.urlid === undefined) {
+      return res.status(400).json({ error: "URL ID is required" });
+    }
     const params = {
       TableName: "url-shortner",
       Key: {
