@@ -1,0 +1,12 @@
+ <div className="relative h-screen overflow-hidden md:flex">
+        <SideBar />
+        <div class="flex-1 p-10 text-2xl font-bold  h-screen overflow-y-auto">
+          content goes herecontent goes herecontent goes  goes
+          herecontent goes herecontent goes herecontent goes herecontent goes
+          herecontent goes herecontent goes herecontent goes herecontent goes
+          herecontent goes herecontent goes herecontent goes herecontent goesherecontent
+          herecontent goes herecontent goes herecontent goes herecontent goes
+          herecontent goes herecontent goes herecontent goes herecontent goes
+          herecontent goes herecontent goes here
+        </div>
+      </div>

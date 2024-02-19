@@ -3,6 +3,8 @@ import styles from "./index.module.css";
 import Link from "next/link";
 import { AccountContext } from "@/context/account";
 import Header from "@/components/header";
+import { shortenURL } from "@/components/api";
+
 export default function Home() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
@@ -17,13 +19,8 @@ export default function Home() {
       return;
     }
     try {
-      const response = await fetch("/api/shorten", {
-        method: "POST",
-        body: JSON.stringify({ url }),
-      });
-
-      const data = await response.json();
-      setShortUrl(data.shortUrl);
+      const response = await shortenURL({ user_id: user.sub, url });
+      setShortUrl(response.data.shortUrl);
     } catch (error) {
       console.log(error);
     }
@@ -65,7 +62,7 @@ export default function Home() {
           )}
         </div>
       </nav> */}
-      <div className=" h-[90%] flex justify-center items-center">
+      <div className=" h-[80%] flex justify-center items-center">
         <div>
           <h1 className="text-white text-6xl font-bold text-center">
             Shorten your URL

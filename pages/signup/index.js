@@ -4,7 +4,7 @@ import { CognitoUser } from "amazon-cognito-identity-js";
 import Link from "next/link";
 import { useContext, useState } from "react";
 export default function SignUp() {
-  const [email, setEmail] = useState("defala9137@oprevolt.com");
+  const [email, setEmail] = useState("cavevar997@laymro.com");
   const [password, setPassword] = useState("Password@12345");
   const [confirmPassword, setConfirmPassword] = useState("Password@12345");
   const [otp, setOtp] = useState("");

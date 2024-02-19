@@ -1,3 +1,4 @@
+import InProgress from "@/components/InProgress";
 import React from "react";
 
 function UrlID({ originalUrl }) {
@@ -7,7 +8,11 @@ function UrlID({ originalUrl }) {
 
   return (
     <div className="w-full h-screen flex items-center justify-center text-3xl">
-      {originalUrl === null ? "Url dosen't exist :-(" : "Redirecting..."}
+      {originalUrl === null ? (
+        "Url dosen't exist :-("
+      ) : (
+        <InProgress type="redirecting" />
+      )}
     </div>
   );
 }

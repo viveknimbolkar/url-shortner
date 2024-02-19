@@ -1,6 +1,7 @@
 import { AccountContext } from "@/context/account";
-import { faArrowDown, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo from "../public/logo.png";
 import Link from "next/link";
 import React, { useContext, useState } from "react";
 
@@ -14,7 +15,7 @@ function Header({ isHomePage = false }) {
       } flex justify-between pr-10 items-center p-3`}
     >
       <Link href={"/"}>
-        <h1 className="font-bold text-3xl ">ShortURL</h1>
+        <img src={logo.src} width={150} />
       </Link>
       {isLoggedIn ? (
         <div
@@ -39,20 +40,22 @@ function Header({ isHomePage = false }) {
           />
           {toggleMenu && (
             <ul className="absolute shadow-lg top-[135%] w-full right-0">
-              <li
-                className={`p-2  ${
+              <Link
+                href={`/user/${user.sub}`}
+                className={`p-2 inline-block w-full ${
                   isHomePage ? "hover:bg-blue-800" : "hover:bg-gray-300 "
                 } `}
               >
-                <Link href={"/dashboard"} className="w-full ">Dashboard</Link>
-              </li>
-              <li
-                className={`p-2 ${
-                  isHomePage ? "hover:bg-blue-800" : "hover:bg-gray-300"
+                Dashboard
+              </Link>
+              <Link
+                href={`/user/${user.sub}/settings`}
+                className={`p-2 inline-block w-full ${
+                  isHomePage ? "hover:bg-blue-800" : "hover:bg-gray-300 "
                 } `}
               >
-                Account Setting
-              </li>
+                Settings
+              </Link>
               <li
                 onClick={() => {
                   logout();

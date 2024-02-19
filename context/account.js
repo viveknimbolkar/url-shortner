@@ -5,15 +5,13 @@ import {
   CognitoUserAttribute,
 } from "amazon-cognito-identity-js";
 import cognitoPool from "@/aws/cognito-identity-client";
-import axios from "axios";
+import { createUser } from "@/components/api";
 const AccountContext = new createContext();
 
 function AccountProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [idToken, setIdToken] = useState("");
   const [user, setUser] = useState({});
-  console.log("isLoggdIn", isLoggedIn);
-  
   useEffect(() => {
     getSession()
       .then((data) => {
@@ -54,7 +52,7 @@ function AccountProvider({ children }) {
   };
 
   const signUp = async (username, password, email, name) => {
-    if (!email || !name || !password) {
+    if (!email || !name || !password || !username) {
       alert("Please fill all the fields");
       return false;
     }
@@ -83,13 +81,12 @@ function AccountProvider({ children }) {
         password,
         attributeList,
         null,
-        (err, data) => {
+        async (err, data) => {
           if (err) {
             console.error(err);
             alert(err.message);
             reject(err.message);
           } else {
-            console.log(data);
             resolve(true);
           }
         }
@@ -124,6 +121,44 @@ function AccountProvider({ children }) {
       });
     });
   };
+
+  const changePassword = (email, oldPassword, newPassword) => {
+    return new Promise(async (resolve, reject) => {
+      const authenticationData = {
+        Username: email,
+        Password: oldPassword,
+      };
+      const authenticationDetails = new AuthenticationDetails(
+        authenticationData
+      );
+      const userData = {
+        Username: email,
+        Pool: cognitoPool,
+      };
+      const cognitoUser = new CognitoUser(userData);
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: (result) => {
+          cognitoUser.changePassword(
+            oldPassword,
+            newPassword,
+            (err, result) => {
+              if (err) {
+                alert(err.message);
+                reject(err.message);
+              }
+              alert("Password changed successfully");
+              resolve(result);
+            }
+          );
+        },
+        onFailure: (err) => {
+          alert(err.message);
+          reject(err.message);
+        },
+      });
+    });
+  };
+
   return (
     <AccountContext.Provider
       value={{
@@ -134,6 +169,8 @@ function AccountProvider({ children }) {
         signUp,
         user,
         logout,
+        getSession,
+        changePassword,
       }}
     >
       {children}
