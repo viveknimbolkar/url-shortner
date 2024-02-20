@@ -35,6 +35,7 @@ import {
 import { deleteLink } from "@/components/api";
 import { AlertMessageContext } from "@/context/alert-context";
 import InProgress from "@/components/InProgress";
+import axios from "axios";
 
 export default function Link({ link }) {
   if (link.length === 0) return <InProgress />;
@@ -46,10 +47,9 @@ export default function Link({ link }) {
 
   const socialMedia = [
     {
-      id: 1,
       name: "Whatsapp",
       icon: faWhatsapp,
-      color: "green-500",
+      color: "#22c55e",
     },
   ];
 
@@ -116,9 +116,12 @@ export default function Link({ link }) {
             {socialMedia.map((media, i) => {
               return (
                 <div
+                  style={{
+                    backgroundColor: media.color,
+                  }}
                   key={`social-media-${i}`}
                   title={media.name}
-                  className={`w-10 h-10 cursor-pointer flex bg-${media.color} rounded-md items-center justify-center`}
+                  className={`w-10 h-10 cursor-pointer flex rounded-md items-center justify-center`}
                 >
                   <FontAwesomeIcon size="xl" icon={media.icon} color="white" />
                 </div>
@@ -184,7 +187,9 @@ export default function Link({ link }) {
           <div className="flex gap-4 items-center justify-between my-2">
             <div className="flex gap-4 items-center">
               <h4 className="font-bold">Created At :</h4>
-              <p className="font-normal">{link?.created_at?.S}</p>
+              <p className="font-normal">
+                {link?.created_at?.S.toString().split("T")[0]}
+              </p>
             </div>
             {link?.expire_at.S ? (
               <div className="flex gap-4 items-center">
@@ -198,7 +203,13 @@ export default function Link({ link }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 my-2">
               <h4 className="font-bold">Password Protected :</h4>
-              <p className="font-normal">
+              <p
+                className={`font-bold ${
+                  link?.is_password_protected?.BOOL
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
                 {link?.is_password_protected?.BOOL ? "Yes" : "No"}
               </p>
             </div>
@@ -302,6 +313,9 @@ function EditModal({
   const [password, setPassword] = useState(link.password.S);
   const [confirmPassword, setConfirmPassword] = useState();
 
+  const { setStatus, setMessage, setOpenSnackbar } =
+    useContext(AlertMessageContext);
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -314,20 +328,29 @@ function EditModal({
     p: 3.5,
   };
 
-  const handleSave = () => {
-    const updatedUserData = {};
-    if (name !== link.name.S) {
-      updatedUserData["name"] = name;
+  const handleSave = async () => {
+    if (isPasswordProtected && password !== confirmPassword) {
+      setStatus("error");
+      setMessage("Password and Confirm Password do not match");
+      setOpenSnackbar(true);
+      return;
     }
-    if (originalUrl !== link.originalUrl.S) {
-      updatedUserData["originalUrl"] = originalUrl;
-    }
-    if (password !== link.password.s) {
-      updatedUserData["password"] = password;
-    }
-    if (isPasswordProtected !== link.isPasswordProtected.BOOL) {
-      updatedUserData["isPasswordProtected"] = isPasswordProtected;
-    }
+    axios
+      .post("/api/user/update", {
+        userID: link.user_id.S,
+        name: name,
+        originalUrl: originalUrl,
+        expireAt: expireAt,
+        expireAfterView: expireAfterViews,
+        password: password ?? "",
+      })
+      .then((res) => {
+        console.log(res);
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -372,7 +395,7 @@ function EditModal({
                   value={expireAt}
                   label={"Expire At"}
                   onChange={(e) => setExpireAt(e.target.value)}
-                  className="p-3 border-[1px] border-black rounded-md"
+                  className="p-3 border-[1px] border-slate-400 rounded-md"
                 />
               </div>
               <TextField

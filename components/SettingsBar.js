@@ -33,7 +33,7 @@ function SettingsBar({ currentPage }) {
     <List className="bg-white w-1/3 h-fit p-0 rounded-md">
       {menu.map((item) => {
         return (
-          <Link href={item.link}>
+          <Link key={item.id} href={item.link}>
             <ListItem
               key={item.id}
               disablePadding
