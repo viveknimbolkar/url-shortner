@@ -305,10 +305,10 @@ function EditModal({
   const [originalUrl, setOriginalUrl] = useState(link.original_url.S);
   const [expireAt, setExpireAt] = useState(link.expire_at.S);
   const [expireAfterViews, setExpireAfterViews] = useState(
-    link.expire_after_views.N
+    link.expire_after_views.N,
   );
   const [isPasswordProtected, setIsPasswordProtected] = useState(
-    link.is_password_protected.BOOL
+    link.is_password_protected.BOOL,
   );
   const [password, setPassword] = useState(link.password.S);
   const [confirmPassword, setConfirmPassword] = useState();

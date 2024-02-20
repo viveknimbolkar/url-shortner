@@ -1,3 +1,10 @@
-.gradient{
-    background-image: linear-gradient(to bottom, #051937, #0d2f65, #224596, #405cc9, #6472fd);
+.gradient {
+  background-image: linear-gradient(
+    to bottom,
+    #051937,
+    #0d2f65,
+    #224596,
+    #405cc9,
+    #6472fd
+  );
 }

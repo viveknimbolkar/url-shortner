@@ -89,7 +89,7 @@ function AccountProvider({ children }) {
           } else {
             resolve(true);
           }
-        }
+        },
       );
     });
   };
@@ -101,7 +101,7 @@ function AccountProvider({ children }) {
         Password: password,
       };
       const authenticationDetails = new AuthenticationDetails(
-        authenticationData
+        authenticationData,
       );
       const userData = {
         Username: email,
@@ -129,7 +129,7 @@ function AccountProvider({ children }) {
         Password: oldPassword,
       };
       const authenticationDetails = new AuthenticationDetails(
-        authenticationData
+        authenticationData,
       );
       const userData = {
         Username: email,
@@ -148,7 +148,7 @@ function AccountProvider({ children }) {
               }
               alert("Password changed successfully");
               resolve(result);
-            }
+            },
           );
         },
         onFailure: (err) => {

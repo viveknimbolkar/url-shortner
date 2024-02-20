@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 
 const AlertMessageContext = createContext();
 
-function AlertMessageProvider({children}) {
+function AlertMessageProvider({ children }) {
   const [message, setMessage] = useState(false);
   const [status, setStatus] = useState("warning");
   const [openSnackbar, setOpenSnackbar] = useState(false);

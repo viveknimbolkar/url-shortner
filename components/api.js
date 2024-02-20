@@ -52,4 +52,4 @@ const deleteLink = ({ user_id, link_id }) => {
       });
   });
 };
-export { shortenURL, getLinks,deleteLink };
+export { shortenURL, getLinks, deleteLink };

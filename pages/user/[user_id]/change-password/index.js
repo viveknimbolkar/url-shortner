@@ -5,7 +5,7 @@ import { TextField, Button } from "@mui/material";
 import React, { useContext, useState } from "react";
 
 function Index() {
-  const { changePassword,user } = useContext(AccountContext);
+  const { changePassword, user } = useContext(AccountContext);
   const [oldPassword, setOldPassword] = useState("Pass@12345");
   const [newPassword, setNewPassword] = useState("Pass@1234");
   const [confirmPassword, setConfirmPassword] = useState("Pass@1234");
@@ -33,8 +33,8 @@ function Index() {
           <SettingsBar currentPage={"profile"} />
           <div className="w-9/12  bg-white p-4 rounded-md">
             <TextField
-                type="password"
-                label="Old Password"
+              type="password"
+              label="Old Password"
               variant="outlined"
               className="w-[49%] "
               value={oldPassword}

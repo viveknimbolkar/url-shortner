@@ -188,8 +188,10 @@ export default function SignUp() {
               Login
             </Link>
           </p>
-        <p className="text-red-500 text-center"> These are test user credentials!</p>
-
+          <p className="text-red-500 text-center">
+            {" "}
+            These are test user credentials!
+          </p>
         </div>
       </div>
     </>

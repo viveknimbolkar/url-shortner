@@ -18,7 +18,7 @@ function UrlID({ originalUrl }) {
 }
 export async function getServerSideProps({ params }) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/${params.urlid}`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/${params.urlid}`,
   );
   const url = await res.json();
   return {
