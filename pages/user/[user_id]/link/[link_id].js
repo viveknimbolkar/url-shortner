@@ -38,12 +38,13 @@ import InProgress from "@/components/InProgress";
 import axios from "axios";
 
 export default function Link({ link }) {
-  if (link.length === 0) return <InProgress />;
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
   const { setStatus, setMessage, setOpenSnackbar } =
     useContext(AlertMessageContext);
+
+  if (link.length === 0) return <InProgress />;
 
   const socialMedia = [
     {
@@ -252,7 +253,10 @@ export default function Link({ link }) {
           <div className="flex items-center my-4 gap-5 w-fit shadow-md rounded-md p-4">
             {browsers.map((browser, i) => {
               return (
-                <div className="w-28 h-24 flex flex-col gap-3 rounded-md shadow-md items-center justify-center">
+                <div
+                  key={`browser-${i}`}
+                  className="w-28 h-24 flex flex-col gap-3 rounded-md shadow-md items-center justify-center"
+                >
                   <h1 className="font-bold text-2xl">0</h1>
                   <FontAwesomeIcon
                     icon={browser.icon}
@@ -305,10 +309,10 @@ function EditModal({
   const [originalUrl, setOriginalUrl] = useState(link.original_url.S);
   const [expireAt, setExpireAt] = useState(link.expire_at.S);
   const [expireAfterViews, setExpireAfterViews] = useState(
-    link.expire_after_views.N,
+    link.expire_after_views.N
   );
   const [isPasswordProtected, setIsPasswordProtected] = useState(
-    link.is_password_protected.BOOL,
+    link.is_password_protected.BOOL
   );
   const [password, setPassword] = useState(link.password.S);
   const [confirmPassword, setConfirmPassword] = useState();

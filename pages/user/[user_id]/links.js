@@ -216,6 +216,7 @@ function LinkModal({ open, setOpen, link, openSnackbar, setOpenSnackbar }) {
               {socialMedia.map((media, i) => {
                 return (
                   <div
+                    key={`media-${i}`}
                     title={media.name}
                     className={`w-10 h-10 cursor-pointer flex bg-${media.color} rounded-md items-center justify-center`}
                   >
@@ -315,7 +316,10 @@ function LinkModal({ open, setOpen, link, openSnackbar, setOpenSnackbar }) {
             <div className="flex items-center justify-between ">
               {browsers.map((browser, i) => {
                 return (
-                  <div className="w-28 h-24 flex flex-col gap-3 rounded-md shadow-md items-center justify-center">
+                  <div
+                    key={`browser-${i}`}
+                    className="w-28 h-24 flex flex-col gap-3 rounded-md shadow-md items-center justify-center"
+                  >
                     <h1 className="font-bold text-2xl">0</h1>
                     <FontAwesomeIcon
                       icon={browser.icon}

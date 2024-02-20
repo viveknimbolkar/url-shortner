@@ -2,6 +2,7 @@ import { AccountContext } from "@/context/account";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../public/logo.png";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useContext, useState } from "react";
 
@@ -15,7 +16,7 @@ function Header({ isHomePage = false }) {
       } flex justify-between pr-10 items-center p-3`}
     >
       <Link href={"/"}>
-        <img src={logo.src} width={150} />
+        <Image alt="ShortURL Logo" src={logo.src} width={150} />
       </Link>
       {isLoggedIn ? (
         <div
@@ -25,7 +26,8 @@ function Header({ isHomePage = false }) {
           className="flex gap-3 items-center relative cursor-pointer"
         >
           {user?.picture && (
-            <img
+            <Image
+              alt={user.name}
               src={user.picture}
               width={40}
               height={40}

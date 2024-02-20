@@ -29,39 +29,7 @@ export default function Home() {
   return (
     <section className={`w-screen h-screen ${styles.homebackground}`}>
       <Header isHomePage={true} />
-      {/* <nav
-        className={`${styles.navbar} flex justify-between px-20 text-white p-4`}
-      >
-        <h1 className="font-bold text-3xl">ShortURL</h1>
-        <div className="flex gap-4">
-          {isLoggedIn ? (
-            <>
-              <Link href={"/dashboard"} className="text-white">
-                DashBoard
-              </Link>
-              <img
-                src={user.picture}
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
-              <h3>{user.name}</h3>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="rounded-full bg-blue px-3 py-2">
-                Login
-              </Link>
-              <Link
-                href={"/signup"}
-                className="rounded-full bg-white text-black px-3 py-2"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
-      </nav> */}
+
       <div className=" h-[80%] flex justify-center items-center">
         <div>
           <h1 className="text-white text-6xl font-bold text-center">

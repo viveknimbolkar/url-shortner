@@ -10,7 +10,7 @@ export default function isAuth(Component) {
       if (!isLoggedIn) {
         Router.push("/");
       }
-    }, []);
+    }, [isLoggedIn]);
 
     // if (!isLoggedIn) {
     //    return Router.push("/");
