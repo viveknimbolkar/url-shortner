@@ -1,5 +1,4 @@
 import RootLayout from "@/components/RootLayout";
-import isAuth from "@/components/isAuth";
 import fetchLink from "@/utils/fetchLink";
 import QRCode from "react-qr-code";
 import React, { useContext, useState } from "react";
@@ -33,26 +32,30 @@ import {
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
 import { deleteLink } from "@/components/api";
-import { AlertMessageContext } from "@/context/alert-context";
 import InProgress from "@/components/InProgress";
 import axios from "axios";
+import path from "@/components/constants/path";
+import { AccountContext } from "@/context/account";
+import { useRouter } from "next/router";
+import {
+  LinkedinIcon,
+  LinkedinShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
+import toast from "react-hot-toast";
 
 export default function Link({ link }) {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
-  const { setStatus, setMessage, setOpenSnackbar } =
-    useContext(AlertMessageContext);
+  const { user } = useContext(AccountContext);
+  const router = useRouter();
 
-  if (link.length === 0) return <InProgress />;
-
-  const socialMedia = [
-    {
-      name: "Whatsapp",
-      icon: faWhatsapp,
-      color: "#22c55e",
-    },
-  ];
+  // if (link.length === 0) return <InProgress />;
+  if (link.length === 0) return <h1>Loading...</h1>;
 
   const browsers = [
     {
@@ -93,15 +96,20 @@ export default function Link({ link }) {
       link_id: link.link_id.S,
     });
     if (response.status === 200) {
-      setConfirmDeleteDialog(false);
-      setMessage("Link deleted successfully");
-      setStatus("success");
-      setOpenSnackbar(true);
+      toast.success("Link deleted successfully");
+      router.push(path(user, "MY_LINKS"));
     } else {
-      setMessage("Link not deleted");
-      setStatus("error");
-      setOpenSnackbar(true);
+      toast.error("Failed to delete link");
     }
+    setConfirmDeleteDialog(false);
+  };
+  const handleDownloadQRCode = () => {
+    const canvas = document.querySelector("#qr-code");
+    const image = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = image;
+    a.download = "qrcode.png";
+    a.click();
   };
 
   return (
@@ -109,25 +117,28 @@ export default function Link({ link }) {
       <div className="flex gap-5 shadow-md rounded-md p-5 h-fit bg-white">
         <div>
           <QRCode value={link?.short_url?.S} />
-          <Button variant="contained" className="w-full bg-color-v3 mt-4">
+          <Button
+            onClick={handleDownloadQRCode}
+            variant="contained"
+            className="w-full bg-color-v3 mt-4"
+          >
             Download
           </Button>
           <h2 className="my-3 font-bold text-xl">Share on </h2>
-          <div className="flex justify-start items-center">
-            {socialMedia.map((media, i) => {
-              return (
-                <div
-                  style={{
-                    backgroundColor: media.color,
-                  }}
-                  key={`social-media-${i}`}
-                  title={media.name}
-                  className={`w-10 h-10 cursor-pointer flex rounded-md items-center justify-center`}
-                >
-                  <FontAwesomeIcon size="xl" icon={media.icon} color="white" />
-                </div>
-              );
-            })}
+          <div className="flex justify-start gap-4 items-center">
+            <WhatsappShareButton
+              url={link?.short_url?.S}
+              title={link?.name?.S}
+              separator=":: "
+            >
+              <WhatsappIcon size={36} className="rounded-md" />
+            </WhatsappShareButton>
+            <TelegramShareButton url={link?.short_url?.S} title={link?.name?.S}>
+              <TelegramIcon size={36} className="rounded-md" />
+            </TelegramShareButton>
+            <LinkedinShareButton title={link?.name?.S} url={link?.short_url?.S}>
+              <LinkedinIcon size={36} className="rounded-md" />
+            </LinkedinShareButton>
           </div>
         </div>
         <div className="w-full overflow-hidden">
@@ -309,16 +320,13 @@ function EditModal({
   const [originalUrl, setOriginalUrl] = useState(link.original_url.S);
   const [expireAt, setExpireAt] = useState(link.expire_at.S);
   const [expireAfterViews, setExpireAfterViews] = useState(
-    link.expire_after_views.N
+    link.expire_after_views.N,
   );
   const [isPasswordProtected, setIsPasswordProtected] = useState(
-    link.is_password_protected.BOOL
+    link.is_password_protected.BOOL,
   );
   const [password, setPassword] = useState(link.password.S);
   const [confirmPassword, setConfirmPassword] = useState();
-
-  const { setStatus, setMessage, setOpenSnackbar } =
-    useContext(AlertMessageContext);
 
   const style = {
     position: "absolute",
@@ -342,6 +350,7 @@ function EditModal({
     axios
       .post("/api/user/update", {
         userID: link.user_id.S,
+        linkID: link.link_id.S,
         name: name,
         originalUrl: originalUrl,
         expireAt: expireAt,
@@ -349,7 +358,6 @@ function EditModal({
         password: password ?? "",
       })
       .then((res) => {
-        console.log(res);
         setOpen(false);
       })
       .catch((err) => {
@@ -477,13 +485,13 @@ export async function getServerSideProps(context) {
       user_id: context.params.user_id,
       link_id: context.params.link_id,
     });
-    console.log(linkDetails);
     return {
       props: {
         link: linkDetails.link ?? [],
       },
     };
   } catch (error) {
+    console.log(error);
     return {
       props: {
         link: [],

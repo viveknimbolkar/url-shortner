@@ -1,18 +1,22 @@
 import { AccountContext } from "@/context/account";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function Login() {
   const [email, setEmail] = useState("cavevar997@laymro.com");
   const [password, setPassword] = useState("Password@12345");
-  const { signIn } = useContext(AccountContext);
+  const { signIn, isLoggedIn } = useContext(AccountContext);
 
   const handleLogin = async () => {
     const signInUser = await signIn(email, password);
     if (signInUser) {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     }
   };
+
+  //  if(isLoggedIn){
+  //    window.location.href = "/";
+  //   }
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -61,10 +65,15 @@ export default function Login() {
         </div>
 
         <p className="mt-4 text-sm text-center text-gray-700">
-          Don&apos;t have an account?{" "}<Link
+          Don&apos;t have an account?{" "}
+          <Link
             href="/signup"
             className="font-medium text-blue-600 hover:underline"
-          >Sign up</Link></p><p className="text-red-500 text-center">
+          >
+            Sign up
+          </Link>
+        </p>
+        <p className="text-red-500 text-center">
           {" "}
           These are test user credentials!
         </p>

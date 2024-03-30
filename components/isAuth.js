@@ -12,10 +12,6 @@ export default function isAuth(Component) {
       }
     }, [isLoggedIn]);
 
-    // if (!isLoggedIn) {
-    //    return Router.push("/");
-    // }
-
     return <Component {...props} />;
   };
 }

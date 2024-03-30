@@ -1,27 +1,13 @@
-import cognitoPool from "@/aws/cognito-identity-client";
 import RootLayout from "@/components/RootLayout";
 import SettingsBar from "@/components/SettingsBar";
 import isAuth from "@/components/isAuth";
-import SideBar from "@/components/sidebar";
 import { AccountContext } from "@/context/account";
-import { AlertMessageContext } from "@/context/alert-context";
-import { faTimes, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Alert,
-  Autocomplete,
-  Avatar,
-  Button,
-  IconButton,
-  Snackbar,
-  TextField,
-} from "@mui/material";
-import { CognitoUserAttribute } from "amazon-cognito-identity-js";
+import { Autocomplete, Avatar, Button, TextField } from "@mui/material";
 import { getNames } from "country-list";
 import React, { useContext, useEffect, useState } from "react";
 
 function Index() {
-  const { user } = useContext(AccountContext);
+  const { user, updateUserDetails } = useContext(AccountContext);
   const countries = getNames();
   const [email, setEmail] = useState();
   const [name, setName] = useState();
@@ -29,8 +15,6 @@ function Index() {
   const [city, setCity] = useState();
   const [state, setState] = useState();
   const [country, setCountry] = useState();
-  const { setMessage, setStatus, setOpenSnackbar } =
-    useContext(AlertMessageContext);
 
   useEffect(() => {
     setEmail(user.email);
@@ -41,72 +25,14 @@ function Index() {
     setCountry(user["custon:country"]);
   }, [user]);
 
-  const handleSave = () => {
-    const attributeList = [];
-
-    if (email !== user.email) {
-      const emailAttribute = new CognitoUserAttribute({
-        Name: "email",
-        Value: email,
-      });
-      attributeList.push(emailAttribute);
-    }
-
-    if (name !== user.name) {
-      const nameAttribute = new CognitoUserAttribute({
-        Name: "name",
-        Value: name,
-      });
-      attributeList.push(nameAttribute);
-    }
-
-    if (username !== user["cognito:username"]) {
-      const usernameAttribute = new CognitoUserAttribute({
-        Name: "preferred_username",
-        Value: username,
-      });
-      attributeList.push(usernameAttribute);
-    }
-
-    if (city !== user["custon:city"]) {
-      const cityAttribute = new CognitoUserAttribute({
-        Name: "custom:city",
-        Value: city,
-      });
-      attributeList.push(cityAttribute);
-    }
-
-    if (state !== user["custon:state"]) {
-      const stateAttribute = new CognitoUserAttribute({
-        Name: "custom:state",
-        Value: state,
-      });
-      attributeList.push(stateAttribute);
-    }
-
-    if (country !== user["custon:country"]) {
-      const countryAttribute = new CognitoUserAttribute({
-        Name: "custom:country",
-        Value: country,
-      });
-      attributeList.push(countryAttribute);
-    }
-
-    const currentUser = cognitoPool.getCurrentUser();
-    console.log(currentUser);
-
-    currentUser.updateAttributes(attributeList, (err, result) => {
-      if (err) {
-        console.log("err", err);
-        setStatus("error");
-        setMessage(err.message);
-        setOpenSnackbar(true);
-      } else {
-        console.log("result", result);
-        setStatus("success");
-        setMessage("Profile Updated");
-        setOpenSnackbar(true);
-      }
+  const handleSave = async () => {
+    const updateUser = await updateUserDetails({
+      name,
+      email,
+      username,
+      city,
+      state,
+      country,
     });
   };
 
@@ -133,7 +59,6 @@ function Index() {
               className="w-9/12"
               variant="outlined"
               onChange={(e) => {
-                console.log(e);
                 setName(e.target.value);
               }}
               value={name}
@@ -143,8 +68,7 @@ function Index() {
               label="Email"
               className="w-9/12"
               onChange={(e) => {
-                console.log(e);
-                setEmail(e.target);
+                setEmail(e.target.value);
               }}
               variant="outlined"
               value={email}
@@ -156,8 +80,7 @@ function Index() {
               label="Username"
               className="w-9/12"
               onChange={(e) => {
-                console.log(e);
-                setUsername(e.target);
+                setUsername(e.target.value);
               }}
               variant="outlined"
               value={username}
@@ -168,8 +91,7 @@ function Index() {
               className="w-9/12"
               variant="outlined"
               onChange={(e) => {
-                console.log(e);
-                setCity(e.target);
+                setCity(e.target.value);
               }}
               value={city}
             />
@@ -180,8 +102,7 @@ function Index() {
               label="State"
               className="w-9/12"
               onChange={(e) => {
-                console.log(e);
-                setState(e.target);
+                setState(e.target.value);
               }}
               variant="outlined"
               value={state}
@@ -189,8 +110,7 @@ function Index() {
             <Autocomplete
               disablePortal
               onChange={(e) => {
-                console.log(e);
-                setCountry(e.target);
+                setCountry(e.target.value);
               }}
               className="w-9/12"
               value={country}

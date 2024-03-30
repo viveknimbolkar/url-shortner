@@ -1,13 +1,14 @@
 import "@/styles/globals.css";
 import { AccountProvider } from "@/context/account";
 import "@/styles/index.css";
-import { AlertMessageProvider } from "@/context/alert-context";
+import { Toaster } from "react-hot-toast";
 export default function App({ Component, pageProps }) {
   return (
-    <AlertMessageProvider>
-      <AccountProvider>
+    <AccountProvider>
+      <main>
         <Component {...pageProps} />
-      </AccountProvider>
-    </AlertMessageProvider>
+        <Toaster position="bottom-left" />
+      </main>
+    </AccountProvider>
   );
 }

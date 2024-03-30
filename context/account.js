@@ -159,6 +159,80 @@ function AccountProvider({ children }) {
     });
   };
 
+  const updateUserDetails = async ({
+    username,
+    name,
+    email,
+    country,
+    city,
+    state,
+  }) => {
+    const attributeList = [];
+
+    if (email !== user.email) {
+      const emailAttribute = new CognitoUserAttribute({
+        Name: "email",
+        Value: email,
+      });
+      attributeList.push(emailAttribute);
+    }
+
+    if (name !== user.name) {
+      const nameAttribute = new CognitoUserAttribute({
+        Name: "name",
+        Value: name,
+      });
+      attributeList.push(nameAttribute);
+    }
+
+    if (username !== user["cognito:username"]) {
+      const usernameAttribute = new CognitoUserAttribute({
+        Name: "preferred_username",
+        Value: username,
+      });
+      attributeList.push(usernameAttribute);
+    }
+
+    if (city !== user["custon:city"]) {
+      const cityAttribute = new CognitoUserAttribute({
+        Name: "custom:city",
+        Value: city,
+      });
+      attributeList.push(cityAttribute);
+    }
+
+    if (state !== user["custon:state"]) {
+      const stateAttribute = new CognitoUserAttribute({
+        Name: "custom:state",
+        Value: state,
+      });
+      attributeList.push(stateAttribute);
+    }
+
+    if (country !== user["custon:country"]) {
+      const countryAttribute = new CognitoUserAttribute({
+        Name: "custom:country",
+        Value: country,
+      });
+      attributeList.push(countryAttribute);
+    }
+
+    return new Promise(async (resolve, reject) => {
+      const isAuthenticated = await authUser(user["cognito:username"]);
+
+      if (isAuthenticated) {
+        currentUser.updateAttributes(attributeList, (err, result) => {
+          if (err) {
+            reject(err.message);
+          } else {
+            resolve(result);
+          }
+        });
+      } else {
+        reject("User not authenticated");
+      }
+    });
+  };
   return (
     <AccountContext.Provider
       value={{
@@ -171,6 +245,7 @@ function AccountProvider({ children }) {
         logout,
         getSession,
         changePassword,
+        updateUserDetails,
       }}
     >
       {children}

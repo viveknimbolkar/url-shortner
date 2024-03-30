@@ -4,7 +4,6 @@ import { PutItemCommand } from "@aws-sdk/client-dynamodb";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      console.log("body", req.body);
       const { user_id } = req.body;
 
       //   init user in table
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
       });
 
       const result = await dynamodb.send(command);
-      console.log(result);
 
       if (result)
         res.status(200).json({ message: "User created successfully!" });

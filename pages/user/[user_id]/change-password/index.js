@@ -22,7 +22,6 @@ function Index() {
     }
 
     const result = await changePassword(user.email, oldPassword, newPassword);
-    console.log(result);
   };
   return (
     <div className="relative h-screen overflow-hidden md:flex">

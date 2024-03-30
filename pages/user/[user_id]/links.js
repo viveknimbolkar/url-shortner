@@ -47,7 +47,6 @@ function Links({ links }) {
       />
     </>
   );
-
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
@@ -190,6 +189,14 @@ function LinkModal({ open, setOpen, link, openSnackbar, setOpenSnackbar }) {
     setOpenSnackbar(true);
   };
 
+  const handleDownloadQRCode = () => {
+    const canvas = document.querySelector("canvas");
+    const image = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = image;
+    a.download = "qrcode.png";
+    a.click();
+  };
   return (
     <Modal
       aria-labelledby="transition-modal-title"
@@ -208,7 +215,11 @@ function LinkModal({ open, setOpen, link, openSnackbar, setOpenSnackbar }) {
         <Box sx={style}>
           <div>
             <QRCode value={link?.short_url?.S} />
-            <Button variant="contained" className="w-full  !my-4">
+            <Button
+              onClick={handleDownloadQRCode}
+              variant="contained"
+              className="w-full  !my-4"
+            >
               Download
             </Button>
             <h2 className="my-3 font-bold text-xl">Share on </h2>

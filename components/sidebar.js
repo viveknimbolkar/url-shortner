@@ -72,7 +72,7 @@ function SideBar() {
 
       <div class="sidebar bg-color-v1 text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
         <Link href={"/"} class="text-white flex items-center space-x-2 px-4">
-          <Image alt="ShortURL Logo" src={logo.src} width={150} />
+          <Image alt="ShortURL Logo" src={logo.src} height={150} width={150} />
         </Link>
 
         <nav>

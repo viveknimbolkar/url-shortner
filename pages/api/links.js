@@ -21,7 +21,6 @@ export default async function handler(req, res) {
         KeyConditionExpression: "#user_id = :user_id",
       });
       // const result = await dynamodb.send(command);
-      // console.log(result.Items);
       const data = [
         {
           expire_at: { S: "" },

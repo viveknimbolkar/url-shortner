@@ -16,7 +16,7 @@ function Header({ isHomePage = false }) {
       } flex justify-between pr-10 items-center p-3`}
     >
       <Link href={"/"}>
-        <Image alt="ShortURL Logo" src={logo.src} width={150} />
+        <Image alt="ShortURL Logo" src={logo.src} width={150} height={150} />
       </Link>
       {isLoggedIn ? (
         <div
@@ -26,7 +26,7 @@ function Header({ isHomePage = false }) {
           className="flex gap-3 items-center relative cursor-pointer"
         >
           {user?.picture && (
-            <Image
+            <img
               alt={user.name}
               src={user.picture}
               width={40}

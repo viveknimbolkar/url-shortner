@@ -1,6 +1,6 @@
 // get desired path endpoint
 export default function path(user, to, link_id = "") {
-  if(!user || !to) return;
+  if (!user || !to) return;
   if (to === "LINK" && !link_id) return;
 
   const paths = {

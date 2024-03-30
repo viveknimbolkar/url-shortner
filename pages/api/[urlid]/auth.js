@@ -1,10 +1,11 @@
 import { dynamodb } from "@/aws/dynamodb";
-import { GetItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { QueryCommand } from "@aws-sdk/client-dynamodb";
 export default async function handler(req, res) {
-  if (req.method === "GET") {
-    if (!req.query.urlid || req.query.urlid === undefined) {
+  if (req.method === "POST") {
+    if (!req.query.urlid) {
       return res.status(400).json({ error: "URL ID is required" });
     }
+
     const params = {
       TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
       IndexName: "link_id-index",
@@ -13,12 +14,18 @@ export default async function handler(req, res) {
         ":link_id": { S: req.query.urlid },
       },
     };
+
     try {
       const command = new QueryCommand(params);
       const result = await dynamodb.send(command);
-      console.log(result.Items[0].original_url.S);
-      const originalUrl = result.Items[0].original_url.S;
-      res.status(200).json({ originalUrl: originalUrl });
+
+      if (result.Count === 0) {
+        return res.status(404).json({ error: "Link not found" });
+      }
+
+      const linkDetails = result?.Items;
+
+      res.json({ message: "lskdajlksjdf" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

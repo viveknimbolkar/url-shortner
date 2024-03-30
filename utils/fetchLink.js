@@ -15,7 +15,6 @@ export default async function fetchLink({ user_id, link_id }) {
       link: response.Item,
     };
   } catch (error) {
-    console.log("error", error);
     return {
       error: error.message,
     };
