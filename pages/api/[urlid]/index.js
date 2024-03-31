@@ -1,5 +1,6 @@
 import { dynamodb } from "@/aws/dynamodb";
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 
 export default async function handler(req, res) {
   // fetch original url if link is not expired and not password protected
@@ -21,31 +22,26 @@ export default async function handler(req, res) {
       // get link details
       const command = new QueryCommand(params);
       const result = await dynamodb.send(command);
+      const link = unmarshall(result?.Items[0]);
 
       if (result.Count === 0) {
         return res.status(404).json({ error: "Link not found" });
       }
 
-      const linkDetails = result?.Items;
-
       // check if link expired
-      if (linkDetails.total_visits > linkDetails.expire_after_views) {
+      if (link.total_visits > link.expire_after_views) {
         return res.status(200).json({ message: "Link expired" });
       }
 
-      // all check passed now send the original url
-      const originalUrl = result.Items[0].original_url.S;
-      const isPasswordProtected = result.Items[0].is_password_protected.BOOL;
-      console.log(isPasswordProtected);
       // generate payload based on payload to conver abstraction
       let payload = {};
 
-      if (isPasswordProtected) {
-        payload.isPasswordProtected = isPasswordProtected;
+      if (link.is_password_protected) {
+        payload.isPasswordProtected = link.is_password_protected;
       } else {
-        payload.originalUrl = originalUrl;
+        payload.originalUrl = link.original_url;
       }
-      console.log(payload);
+      console.log("payload", payload);
       res.status(200).json(payload);
     } catch (error) {
       res.status(500).json({ error: error.message });

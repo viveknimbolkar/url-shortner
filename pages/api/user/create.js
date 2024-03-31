@@ -20,7 +20,7 @@ export default async function handler(req, res) {
           qr_code: { S: "" },
           description: { S: "" },
           name: { S: "" },
-          expire_after_views: { N: `${0}` },
+          expire_after_views: { N: `${10}` },
           password: { S: "" },
           referer: { SS: [""] },
           location: { S: "" },

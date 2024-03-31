@@ -1,4 +1,3 @@
-import QRCode from "react-qr-code";
 import React, { useContext, useState } from "react";
 import {
   Alert,
@@ -214,7 +213,6 @@ function LinkModal({ open, setOpen, link, openSnackbar, setOpenSnackbar }) {
       <Fade in={open}>
         <Box sx={style}>
           <div>
-            <QRCode value={link?.short_url?.S} />
             <Button
               onClick={handleDownloadQRCode}
               variant="contained"

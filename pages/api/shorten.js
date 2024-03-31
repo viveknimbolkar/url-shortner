@@ -36,7 +36,7 @@ export default async function handler(req, res) {
           qr_code: { S: "" },
           description: { S: "" },
           name: { S: randomName },
-          expire_after_views: { N: `${0}` },
+          expire_after_views: { N: `${100}` },
           password: { S: "" },
           is_password_protected: { BOOL: false },
           referer: { SS: [""] },
@@ -50,10 +50,14 @@ export default async function handler(req, res) {
               safari: { N: `${0}` },
             },
           },
+          analytics: {
+            M: {},
+          },
         },
       });
 
       const result = await dynamodb.send(command);
+
       if (result["$metadata"].httpStatusCode === 200) {
         res.status(200).json({ shortUrl: shortUrl });
       } else {

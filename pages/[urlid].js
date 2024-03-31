@@ -5,34 +5,19 @@ import { useRouter } from "next/router";
 import logo from "../public/logo.png";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Typography, styled } from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
 
 function UrlID({ originalUrl, isPasswordProtected }) {
-  console.log("originalUrl", originalUrl);
-  console.log("isPasswordProtected", isPasswordProtected);
   const router = useRouter();
   const [password, setPassword] = useState("");
-  if (!isPasswordProtected && originalUrl) {
-    // window.location.href = originalUrl;
-    router.push(originalUrl);
+  console.log(originalUrl, isPasswordProtected);
+  // redirect to original url if not password protected
+  if (!isPasswordProtected && originalUrl && typeof window !== "undefined") {
+    window.location.href = originalUrl;
   }
 
-  // send password to grant access to visit the site
-  const sendPassword = async (password) => {
-    const res = await fetch(`/api/${router.query.urlid}`, {
-      method: "POST",
-      body: JSON.stringify({ password }),
-    });
-
-    const data = await res.json();
-
-    if (data.originalUrl) {
-      window.location.href = data.originalUrl;
-    }
-  };
-
   const incrementVisitCount = async (linkID) => {
-    // await incrementLinkVisitCount(linkID);
+    await incrementLinkVisitCount(linkID);
   };
 
   const handlePassword = async () => {
@@ -44,7 +29,6 @@ function UrlID({ originalUrl, isPasswordProtected }) {
       body: JSON.stringify({ password: password }),
     });
     const data = await sendPassword.json();
-    console.log(data);
 
     if (data.originalUrl) {
       router.push(data.originalUrl);
@@ -103,8 +87,10 @@ function UrlID({ originalUrl, isPasswordProtected }) {
             </Button>
           </Box>
         </>
+      ) : !originalUrl ? (
+        <h1>Url dosen&apos;t exist :-</h1>
       ) : (
-        <></>
+        <InProgress type="redirecting" />
       )}
     </div>
   );
@@ -114,9 +100,8 @@ export async function getServerSideProps({ params }) {
   const endpoint = `/api/${params.urlid}`;
 
   const res = await fetch(process.env.NEXT_PUBLIC_DOMAIN + endpoint);
-
   const url = await res.json();
-
+  console.log(url);
   return {
     props: url,
   };

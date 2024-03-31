@@ -26,7 +26,7 @@ function Index() {
   return (
     <div className="relative h-screen overflow-hidden md:flex">
       <SideBar />
-      <div class="flex-1 p-5  h-screen overflow-y-auto bg-gray-200">
+      <div className="flex-1 p-5  h-screen overflow-y-auto bg-gray-200">
         <h1 className="text-3xl mb-10">Change Password</h1>
         <section className="flex gap-4 w-full">
           <SettingsBar currentPage={"profile"} />

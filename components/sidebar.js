@@ -40,8 +40,8 @@ function SideBar() {
   ];
   return (
     <>
-      <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
-        <a href="#" class="block p-4 text-white font-bold">
+      <div className="bg-gray-800 text-gray-100 flex justify-between md:hidden">
+        <a href="#" className="block p-4 text-white font-bold">
           ShortURL
         </a>
 
@@ -51,10 +51,10 @@ function SideBar() {
               .querySelector(".sidebar")
               .classList.toggle("-translate-x-full");
           }}
-          class="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700"
+          className="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700"
         >
           <svg
-            class="h-5 w-5"
+            className="h-5 w-5"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -70,8 +70,11 @@ function SideBar() {
         </button>
       </div>
 
-      <div class="sidebar bg-color-v1 text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
-        <Link href={"/"} class="text-white flex items-center space-x-2 px-4">
+      <div className="sidebar bg-color-v1 text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+        <Link
+          href={"/"}
+          className="text-white flex items-center space-x-2 px-4"
+        >
           <Image alt="ShortURL Logo" src={logo.src} height={150} width={150} />
         </Link>
 
@@ -81,7 +84,7 @@ function SideBar() {
               onClick={item?.onClick}
               href={item.link}
               key={`item-${i}`}
-              class="block py-2.5 px-4 rounded transition duration-200 hover:bg-color-v3 hover:text-white"
+              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-color-v3 hover:text-white"
             >
               <FontAwesomeIcon icon={item.icon} />
               &nbsp;&nbsp;&nbsp; {item.name}

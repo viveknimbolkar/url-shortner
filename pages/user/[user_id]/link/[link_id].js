@@ -1,8 +1,8 @@
 import RootLayout from "@/components/RootLayout";
 import fetchLink from "@/utils/fetchLink";
-import QRCode from "react-qr-code";
+import QRCode from "qrcode.react";
 import React, { useContext, useState } from "react";
-
+import { unmarshall } from "@aws-sdk/util-dynamodb";
 import {
   Backdrop,
   Box,
@@ -54,42 +54,47 @@ export default function Link({ link }) {
   const { user } = useContext(AccountContext);
   const router = useRouter();
 
-  // if (link.length === 0) return <InProgress />;
-  if (link.length === 0) return <h1>Loading...</h1>;
-
+  if (link.length === 0) return <InProgress type={"loading"} />;
   const browsers = [
     {
       name: "Chrome",
       icon: faChrome,
       color: "#3EAA5B",
+      counts: link.browsers.chrome,
     },
     {
       name: "Firefox",
       icon: faFirefoxBrowser,
       color: "#FF6535",
+      counts: link.browsers.firefox,
     },
     {
       name: "Edge",
       icon: faEdge,
       color: "#127CD7",
+      counts: link.browsers.edge,
     },
     {
       name: "Total Visits",
       icon: faUser,
       color: "#4B5563",
+      counts: link.total_visits,
     },
   ];
 
+  // copy original link
   const handleOriginalLinkCopy = () => {
     navigator.clipboard.writeText(link.original_url.S);
     setOpenSnackbar(true);
   };
 
+  // copy short link
   const handleShortLinkCopy = () => {
     navigator.clipboard.writeText(link.short_url.S);
     setOpenSnackbar(true);
   };
 
+  // delete link
   const handleDelete = async () => {
     const response = await deleteLink({
       user_id: link.user_id.S,
@@ -103,20 +108,31 @@ export default function Link({ link }) {
     }
     setConfirmDeleteDialog(false);
   };
+
   const handleDownloadQRCode = () => {
-    const canvas = document.querySelector("#qr-code");
-    const image = canvas.toDataURL("image/png");
-    const a = document.createElement("a");
-    a.href = image;
-    a.download = "qrcode.png";
-    a.click();
+    const canvas = document.getElementById("qrcode");
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "qrcode.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
   return (
     <RootLayout heading={"Link Details"}>
       <div className="flex gap-5 shadow-md rounded-md p-5 h-fit bg-white">
         <div>
-          <QRCode value={link?.short_url?.S} />
+          <QRCode
+            id="qrcode"
+            includeMargin={true}
+            value={link.short_url}
+            level="H"
+            size={300}
+          />
           <Button
             onClick={handleDownloadQRCode}
             variant="contained"
@@ -127,16 +143,16 @@ export default function Link({ link }) {
           <h2 className="my-3 font-bold text-xl">Share on </h2>
           <div className="flex justify-start gap-4 items-center">
             <WhatsappShareButton
-              url={link?.short_url?.S}
-              title={link?.name?.S}
+              url={link?.short_url}
+              title={link?.name}
               separator=":: "
             >
               <WhatsappIcon size={36} className="rounded-md" />
             </WhatsappShareButton>
-            <TelegramShareButton url={link?.short_url?.S} title={link?.name?.S}>
+            <TelegramShareButton url={link?.short_url} title={link?.name}>
               <TelegramIcon size={36} className="rounded-md" />
             </TelegramShareButton>
-            <LinkedinShareButton title={link?.name?.S} url={link?.short_url?.S}>
+            <LinkedinShareButton title={link?.name} url={link?.short_url}>
               <LinkedinIcon size={36} className="rounded-md" />
             </LinkedinShareButton>
           </div>
@@ -144,7 +160,7 @@ export default function Link({ link }) {
         <div className="w-full overflow-hidden">
           <div className="flex justify-between items-center">
             <h1 className="font-bold text-2xl w-1/2 text-ellipsis overflow-hidden">
-              {link?.name?.S}
+              {link?.name}
             </h1>
             <div className="flex items-center gap-4 ">
               <Button
@@ -169,9 +185,9 @@ export default function Link({ link }) {
             <a
               target="_blank"
               className="hover:text-color-v4 hover:underline text-ellipsis font-normal overflow-hidden "
-              href={link?.original_url?.S}
+              href={link?.original_url}
             >
-              {link?.original_url?.S}
+              {link?.original_url}
             </a>
             <span
               onClick={handleOriginalLinkCopy}
@@ -185,9 +201,9 @@ export default function Link({ link }) {
             <a
               target="_blank"
               className="hover:text-color-v4 hover:underline font-normal"
-              href={link?.short_url?.S}
+              href={link?.short_url}
             >
-              {link?.short_url?.S}
+              {link?.short_url}
             </a>
             <span
               onClick={handleShortLinkCopy}
@@ -200,13 +216,13 @@ export default function Link({ link }) {
             <div className="flex gap-4 items-center">
               <h4 className="font-bold">Created At :</h4>
               <p className="font-normal">
-                {link?.created_at?.S.toString().split("T")[0]}
+                {link?.created_at.toString().split("T")[0]}
               </p>
             </div>
             {link?.expire_at.S ? (
               <div className="flex gap-4 items-center">
                 <h4 className="font-bold">Expire At :</h4>
-                <p>{link?.expire_at?.S}</p>
+                <p>{link?.expire_at}</p>
               </div>
             ) : (
               <></>
@@ -231,11 +247,9 @@ export default function Link({ link }) {
                   <h4 className="font-bold">Password :</h4>
                   <p>
                     {showPassword ? (
-                      link?.is_password_protected?.BOOL
+                      link?.password
                     ) : (
-                      <>
-                        &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
-                      </>
+                      <p>&bull;&bull;&bull;&bull;&bull;</p>
                     )}
                   </p>
                   {showPassword ? (
@@ -259,7 +273,13 @@ export default function Link({ link }) {
           </div>
           <div className="items-center flex gap-4 my-2">
             <h4 className="font-bold">Expire After Views: </h4>
-            <p className="font-normal">{link?.expire_after_views?.N}</p>
+            <p className="font-normal">{link?.expire_after_views}</p>
+          </div>
+          <div className="items-center flex gap-4 my-2">
+            <h4 className="font-bold">Remaining Clicks: </h4>
+            <p className="font-normal">
+              {link.expire_after_views - link.total_visits}
+            </p>
           </div>
           <div className="flex items-center my-4 gap-5 w-fit shadow-md rounded-md p-4">
             {browsers.map((browser, i) => {
@@ -268,7 +288,7 @@ export default function Link({ link }) {
                   key={`browser-${i}`}
                   className="w-28 h-24 flex flex-col gap-3 rounded-md shadow-md items-center justify-center"
                 >
-                  <h1 className="font-bold text-2xl">0</h1>
+                  <h1 className="font-bold text-2xl">{browser.counts}</h1>
                   <FontAwesomeIcon
                     icon={browser.icon}
                     color={browser.color}
@@ -340,25 +360,31 @@ function EditModal({
     p: 3.5,
   };
 
+  // update link
   const handleSave = async () => {
     if (isPasswordProtected && password !== confirmPassword) {
-      setStatus("error");
-      setMessage("Password and Confirm Password do not match");
-      setOpenSnackbar(true);
+      toast.error("Password and Confirm Password do not match");
       return;
     }
+    let payload = {
+      userID: link.user_id,
+      linkID: link.link_id,
+      name: name,
+      originalUrl: originalUrl,
+      expireAt: expireAt,
+      expireAfterView: expireAfterViews,
+      password: password,
+      isPasswordProtected: isPasswordProtected,
+    };
+
+    if (password === "") {
+      delete payload.password;
+    }
+
     axios
-      .post("/api/user/update", {
-        userID: link.user_id.S,
-        linkID: link.link_id.S,
-        name: name,
-        originalUrl: originalUrl,
-        expireAt: expireAt,
-        expireAfterView: expireAfterViews,
-        password: password ?? "",
-        isPasswordProtected: isPasswordProtected,
-      })
+      .post("/api/user/update", payload)
       .then((res) => {
+        console.log("res", res);
         setOpen(false);
       })
       .catch((err) => {
@@ -486,9 +512,16 @@ export async function getServerSideProps(context) {
       user_id: context.params.user_id,
       link_id: context.params.link_id,
     });
+
+    let link = unmarshall(linkDetails.link);
+
+    if (link?.referer) {
+      delete link.referer;
+    }
+
     return {
       props: {
-        link: linkDetails.link ?? [],
+        link: link ?? [],
       },
     };
   } catch (error) {
