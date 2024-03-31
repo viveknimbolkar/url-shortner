@@ -12,6 +12,7 @@ export default async function handler(req, res) {
       expireAt,
       expireAfterView,
       password,
+      isPasswordProtected,
     } = req.body;
 
     if (!userID) {
@@ -30,13 +31,14 @@ export default async function handler(req, res) {
           link_id: { S: linkID },
         },
         UpdateExpression:
-          "set #name = :name, #originalUrl = :originalUrl, #expireAt = :expireAt, #expireAfterViews = :expireAfterViews, #password = :password",
+          "set #name = :name, #originalUrl = :originalUrl, #expireAt = :expireAt, #expireAfterViews = :expireAfterViews, #password = :password, #isPasswordProtected = :isPasswordProtected",
         ExpressionAttributeNames: {
           "#name": "name",
           "#originalUrl": "original_url",
           "#expireAt": "expire_at",
           "#expireAfterViews": "expire_after_views",
           "#password": "password",
+          "#isPasswordProtected": "is_password_protected",
         },
         ExpressionAttributeValues: {
           ":name": { S: name },
@@ -44,12 +46,14 @@ export default async function handler(req, res) {
           ":expireAt": { S: expireAt ?? "" },
           ":expireAfterViews": { N: expireAfterView ?? 0 },
           ":password": { S: password ?? "" },
+          ":isPasswordProtected": { BOOL: isPasswordProtected ?? false },
         },
       };
 
       const command = new UpdateItemCommand(params);
 
       const response = await dynamodb.send(command);
+
       if (response["$metadata"].httpStatusCode === 200) {
         res.status(200).json({ message: "Link Updated successfully" });
       } else {

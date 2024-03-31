@@ -8,15 +8,47 @@ import React, { useEffect, useState } from "react";
 import { Box, TextField, Button, Typography, styled } from "@mui/material";
 
 function UrlID({ originalUrl, isPasswordProtected }) {
+  console.log("originalUrl", originalUrl);
+  console.log("isPasswordProtected", isPasswordProtected);
   const router = useRouter();
-  const [askForPassword, setAskForPassword] = useState(false);
-
-  if (originalUrl && typeof window !== "undefined") {
+  const [password, setPassword] = useState("");
+  if (!isPasswordProtected && originalUrl) {
     // window.location.href = originalUrl;
+    router.push(originalUrl);
   }
 
+  // send password to grant access to visit the site
+  const sendPassword = async (password) => {
+    const res = await fetch(`/api/${router.query.urlid}`, {
+      method: "POST",
+      body: JSON.stringify({ password }),
+    });
+
+    const data = await res.json();
+
+    if (data.originalUrl) {
+      window.location.href = data.originalUrl;
+    }
+  };
+
   const incrementVisitCount = async (linkID) => {
-    await incrementLinkVisitCount(linkID);
+    // await incrementLinkVisitCount(linkID);
+  };
+
+  const handlePassword = async () => {
+    const sendPassword = await fetch(`/api/${router.query.urlid}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: password }),
+    });
+    const data = await sendPassword.json();
+    console.log(data);
+
+    if (data.originalUrl) {
+      router.push(data.originalUrl);
+    }
   };
 
   useEffect(() => {
@@ -31,7 +63,7 @@ function UrlID({ originalUrl, isPasswordProtected }) {
         // <InProgress type="redirecting" />
         <div>Loading...</div>
       )} */}
-      {!isPasswordProtected ? (
+      {isPasswordProtected ? (
         <>
           <Box
             display={"flex"}
@@ -54,9 +86,19 @@ function UrlID({ originalUrl, isPasswordProtected }) {
               This link is password protected. Please enter the password to
               continue to the site.
             </Typography>
-            <TextField required label="Enter Password" type="password" />
+            <TextField
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              label="Enter Password"
+              type="password"
+            />
 
-            <Button variant="contained" sx={{ height: 50 }}>
+            <Button
+              onClick={handlePassword}
+              variant="contained"
+              sx={{ height: 50 }}
+            >
               Visit Site
             </Button>
           </Box>
@@ -76,10 +118,7 @@ export async function getServerSideProps({ params }) {
   const url = await res.json();
 
   return {
-    props: {
-      originalUrl: url.originalUrl || null,
-      isPasswordProtected: url.isPasswordProtected || false,
-    },
+    props: url,
   };
 }
 
