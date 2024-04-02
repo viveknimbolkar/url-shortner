@@ -1,8 +1,11 @@
 import RootLayout from "@/components/RootLayout";
 import fetchLink from "@/utils/fetchLink";
 import QRCode from "qrcode.react";
+import { Line } from "react-chartjs-2";
+
 import React, { useContext, useState } from "react";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
+
 import {
   Backdrop,
   Box,
@@ -312,6 +315,7 @@ export default function Link({ link }) {
             })}
           </div>
         </div>
+        <div>{/* charts */}</div>
       </div>
       <Dialog
         open={confirmDeleteDialog}
