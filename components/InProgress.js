@@ -1,12 +1,13 @@
 import React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 function InProgress({ type }) {
   return (
     <div className="flex justify-center items-center h-screen w-full">
       {type === "loading" ? (
-        <h1>Loading...</h1>
+        <CircularProgress size={100} />
       ) : type === "redirecting" ? (
         <>
-          <h1>Redirecting...</h1>
+          <CircularProgress size={100} />
         </>
       ) : type === "error" ? (
         <>

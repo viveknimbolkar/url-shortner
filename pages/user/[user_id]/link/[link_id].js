@@ -14,6 +14,7 @@ import {
   Fade,
   Modal,
   Switch,
+  Tooltip,
   TextField,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,14 +85,12 @@ export default function Link({ link }) {
 
   // copy original link
   const handleOriginalLinkCopy = () => {
-    navigator.clipboard.writeText(link.original_url.S);
-    setOpenSnackbar(true);
+    navigator.clipboard.writeText(link.original_url);
   };
 
   // copy short link
   const handleShortLinkCopy = () => {
-    navigator.clipboard.writeText(link.short_url.S);
-    setOpenSnackbar(true);
+    navigator.clipboard.writeText(link.short_url);
   };
 
   // delete link
@@ -189,12 +188,19 @@ export default function Link({ link }) {
             >
               {link?.original_url}
             </a>
-            <span
-              onClick={handleOriginalLinkCopy}
-              className="w-8 h-8 flex items-center justify-center rounded-md cursor-pointer text-white bg-color-v3 hover:bg-color-v4 duration-200"
+            <Tooltip
+              arrow
+              enterDelay={1000}
+              enterNextDelay={1000}
+              title="Copy Original URL"
             >
-              <FontAwesomeIcon icon={faCopy} />
-            </span>
+              <span
+                onClick={handleOriginalLinkCopy}
+                className="w-8 h-8 flex items-center justify-center rounded-md cursor-pointer text-white bg-color-v3 hover:bg-color-v4 duration-200"
+              >
+                <FontAwesomeIcon icon={faCopy} />
+              </span>
+            </Tooltip>
           </div>
           <div className="flex gap-4 my-4">
             <h4 className="font-bold">Short Link :</h4>
@@ -205,12 +211,19 @@ export default function Link({ link }) {
             >
               {link?.short_url}
             </a>
-            <span
-              onClick={handleShortLinkCopy}
-              className="w-8 h-8 flex items-center justify-center rounded-md cursor-pointer text-white bg-color-v3 hover:bg-color-v4 duration-200"
+            <Tooltip
+              arrow
+              enterDelay={1000}
+              enterNextDelay={1000}
+              title="Copy Short URL"
             >
-              <FontAwesomeIcon icon={faCopy} />
-            </span>
+              <span
+                onClick={handleShortLinkCopy}
+                className="w-8 h-8 flex items-center justify-center rounded-md cursor-pointer text-white bg-color-v3 hover:bg-color-v4 duration-200"
+              >
+                <FontAwesomeIcon icon={faCopy} />
+              </span>
+            </Tooltip>
           </div>
           <div className="flex gap-4 items-center justify-between my-2">
             <div className="flex gap-4 items-center">
@@ -219,7 +232,7 @@ export default function Link({ link }) {
                 {link?.created_at.toString().split("T")[0]}
               </p>
             </div>
-            {link?.expire_at.S ? (
+            {link?.expire_at ? (
               <div className="flex gap-4 items-center">
                 <h4 className="font-bold">Expire At :</h4>
                 <p>{link?.expire_at}</p>
