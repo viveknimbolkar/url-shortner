@@ -1,6 +1,5 @@
 import { incrementLinkVisitCount } from "@/api/api";
 import InProgress from "@/components/InProgress";
-import fetchLink from "@/utils/fetchLink";
 import { useRouter } from "next/router";
 import logo from "../public/logo.png";
 import Image from "next/image";

@@ -6,9 +6,9 @@ import React, { useContext, useState } from "react";
 
 function Index() {
   const { changePassword, user } = useContext(AccountContext);
-  const [oldPassword, setOldPassword] = useState("Pass@12345");
-  const [newPassword, setNewPassword] = useState("Pass@1234");
-  const [confirmPassword, setConfirmPassword] = useState("Pass@1234");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
@@ -45,7 +45,7 @@ function Index() {
                 label="New Password"
                 variant="outlined"
                 type="password"
-                className="w-1/2 "
+                className="w-1/2"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
