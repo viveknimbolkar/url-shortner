@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
     try {
       const command = new QueryCommand({
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         ExpressionAttributeNames: {
           "#user_id": "user_id",
         },

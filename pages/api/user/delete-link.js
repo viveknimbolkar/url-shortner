@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const command = new DeleteItemCommand({
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         Key: {
           user_id: { S: req.body.user_id },
           link_id: { S: req.body.link_id },

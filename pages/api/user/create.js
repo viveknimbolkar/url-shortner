@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
       //   init user in table
       const command = new PutItemCommand({
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         Item: {
           user_id: { S: req.body.user_id },
           link_id: { S: "" },

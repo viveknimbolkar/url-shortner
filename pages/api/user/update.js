@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       }
 
       const params = {
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         Key: {
           user_id: { S: userID },
           link_id: { S: linkID },

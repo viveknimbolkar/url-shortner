@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     try {
       // get link based on link_id using gsi
       const getLinkDetails = new QueryCommand({
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         IndexName: "link_id-index",
         Key: {
           link_id: { S: link_id },
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       }
 
       const command = new UpdateItemCommand({
-        TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         Key: {
           user_id: { S: linkDetails[0].user_id.S },
           link_id: { S: link_id },

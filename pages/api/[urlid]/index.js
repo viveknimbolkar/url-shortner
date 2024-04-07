@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     }
 
     const params = {
-      TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
-      IndexName: process.env.NEXT_PUBLIC_INDEX_NAME,
+      TableName: process.env.TABLE_NAME,
+      IndexName: process.env.INDEX_NAME,
       KeyConditionExpression: "link_id = :link_id",
       ExpressionAttributeValues: {
         ":link_id": { S: req.query.urlid },
@@ -53,8 +53,8 @@ export default async function handler(req, res) {
     }
 
     const params = {
-      TableName: process.env.NEXT_PUBLIC_TABLE_NAME,
-      IndexName: process.env.NEXT_PUBLIC_INDEX_NAME,
+      TableName: process.env.TABLE_NAME,
+      IndexName: process.env.INDEX_NAME,
       KeyConditionExpression: "link_id = :link_id",
       ExpressionAttributeValues: {
         ":link_id": { S: req.query.urlid },
