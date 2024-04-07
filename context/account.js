@@ -5,7 +5,6 @@ import {
   CognitoUserAttribute,
 } from "amazon-cognito-identity-js";
 import cognitoPool from "@/aws/cognito-identity-client";
-import { createUser } from "@/components/api";
 const AccountContext = new createContext();
 
 function AccountProvider({ children }) {
@@ -89,7 +88,7 @@ function AccountProvider({ children }) {
           } else {
             resolve(true);
           }
-        },
+        }
       );
     });
   };
@@ -101,7 +100,7 @@ function AccountProvider({ children }) {
         Password: password,
       };
       const authenticationDetails = new AuthenticationDetails(
-        authenticationData,
+        authenticationData
       );
       const userData = {
         Username: email,
@@ -129,7 +128,7 @@ function AccountProvider({ children }) {
         Password: oldPassword,
       };
       const authenticationDetails = new AuthenticationDetails(
-        authenticationData,
+        authenticationData
       );
       const userData = {
         Username: email,
@@ -148,7 +147,7 @@ function AccountProvider({ children }) {
               }
               alert("Password changed successfully");
               resolve(result);
-            },
+            }
           );
         },
         onFailure: (err) => {

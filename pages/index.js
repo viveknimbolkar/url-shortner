@@ -3,8 +3,7 @@ import styles from "./index.module.css";
 import Link from "next/link";
 import { AccountContext } from "@/context/account";
 import Header from "@/components/header";
-import { shortenURL } from "@/components/api";
-
+import { shortenURL } from "@/api/api";
 export default function Home() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");

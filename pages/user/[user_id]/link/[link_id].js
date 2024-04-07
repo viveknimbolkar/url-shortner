@@ -35,10 +35,10 @@ import {
   faFirefoxBrowser,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
-import { deleteLink } from "@/components/api";
+import { deleteLink } from "@/api/api";
 import InProgress from "@/components/InProgress";
 import axios from "axios";
-import path from "@/components/constants/path";
+import path from "@/constants/path";
 import { AccountContext } from "@/context/account";
 import { useRouter } from "next/router";
 import {
